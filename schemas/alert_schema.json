@@ -1,0 +1,360 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SOAR Alert Schema",
+    "description": "Canonical schema for security alerts ingested into the SOAR system",
+    "type": "object",
+    "required": [
+        "alert_id",
+        "timestamp",
+        "source",
+        "severity",
+        "alert_type",
+        "description"
+    ],
+    "properties": {
+        "alert_id": {
+            "type": "string",
+            "description": "Unique identifier for the alert",
+            "pattern": "^ALT-[A-Z0-9]{8,16}$",
+            "example": "ALT-7F3A9B2C"
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when the alert was generated",
+            "example": "2025-01-07T14:30:00Z"
+        },
+        "source": {
+            "type": "object",
+            "description": "Source system that generated the alert",
+            "required": [
+                "system_name",
+                "system_type"
+            ],
+            "properties": {
+                "system_name": {
+                    "type": "string",
+                    "description": "Name of the source system",
+                    "example": "CrowdStrike-EDR-Prod"
+                },
+                "system_type": {
+                    "type": "string",
+                    "enum": [
+                        "SIEM",
+                        "IDS",
+                        "IPS",
+                        "EDR",
+                        "Firewall",
+                        "Email Gateway",
+                        "DLP",
+                        "Cloud Security",
+                        "Custom"
+                    ],
+                    "description": "Type of security system",
+                    "example": "EDR"
+                },
+                "system_id": {
+                    "type": "string",
+                    "description": "Optional identifier for the source system instance",
+                    "example": "edr-node-05"
+                }
+            }
+        },
+        "severity": {
+            "type": "string",
+            "enum": [
+                "critical",
+                "high",
+                "medium",
+                "low",
+                "info"
+            ],
+            "description": "Alert severity level",
+            "example": "high"
+        },
+        "alert_type": {
+            "type": "string",
+            "description": "Category of the security alert",
+            "enum": [
+                "malware_detection",
+                "intrusion_attempt",
+                "brute_force",
+                "data_exfiltration",
+                "privilege_escalation",
+                "lateral_movement",
+                "phishing",
+                "anomalous_behavior",
+                "policy_violation",
+                "vulnerability_exploit",
+                "ddos",
+                "reconnaissance",
+                "command_and_control",
+                "ransomware",
+                "suspicious_login",
+                "data_leak",
+                "insider_threat",
+                "other"
+            ],
+            "example": "brute_force"
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable description of the alert",
+            "minLength": 10,
+            "maxLength": 1000,
+            "example": "Multiple failed SSH login attempts detected from IP 192.168.1.100 targeting server prod-db-01"
+        },
+        "affected_assets": {
+            "type": "array",
+            "description": "Assets involved in the alert",
+            "items": {
+                "type": "object",
+                "required": [
+                    "asset_type",
+                    "asset_id"
+                ],
+                "properties": {
+                    "asset_type": {
+                        "type": "string",
+                        "enum": [
+                            "host",
+                            "user",
+                            "ip_address",
+                            "domain",
+                            "application",
+                            "file",
+                            "process",
+                            "network_segment"
+                        ],
+                        "example": "host"
+                    },
+                    "asset_id": {
+                        "type": "string",
+                        "description": "Identifier for the asset",
+                        "example": "prod-db-01"
+                    },
+                    "asset_details": {
+                        "type": "object",
+                        "description": "Additional asset-specific information",
+                        "additionalProperties": true,
+                        "example": {
+                            "hostname": "prod-db-01.corp.local",
+                            "ip": "10.0.5.23",
+                            "os": "Ubuntu 22.04"
+                        }
+                    }
+                }
+            }
+        },
+        "indicators": {
+            "type": "object",
+            "description": "Indicators of Compromise (IoCs) and other threat indicators",
+            "properties": {
+                "ip_addresses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "ipv4"
+                    },
+                    "description": "IP addresses involved",
+                    "example": [
+                        "192.168.1.100",
+                        "203.0.113.45"
+                    ]
+                },
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Domains involved",
+                    "example": [
+                        "malicious-site.com"
+                    ]
+                },
+                "file_hashes": {
+                    "type": "object",
+                    "properties": {
+                        "md5": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "sha1": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "sha256": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "example": {
+                        "sha256": [
+                            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                        ]
+                    }
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "description": "URLs involved",
+                    "example": [
+                        "http://malicious-site.com/payload"
+                    ]
+                },
+                "email_addresses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "description": "Email addresses involved",
+                    "example": [
+                        "attacker@evil.com"
+                    ]
+                },
+                "user_agents": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "HTTP user agents observed"
+                },
+                "processes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Process names or paths",
+                    "example": [
+                        "powershell.exe",
+                        "/usr/bin/nc"
+                    ]
+                }
+            }
+        },
+        "context": {
+            "type": "object",
+            "description": "Additional contextual information",
+            "properties": {
+                "attack_phase": {
+                    "type": "string",
+                    "enum": [
+                        "reconnaissance",
+                        "weaponization",
+                        "delivery",
+                        "exploitation",
+                        "installation",
+                        "command_and_control",
+                        "actions_on_objectives"
+                    ],
+                    "description": "MITRE ATT&CK kill chain phase"
+                },
+                "mitre_tactics": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "MITRE ATT&CK tactics",
+                    "example": [
+                        "TA0006 - Credential Access"
+                    ]
+                },
+                "mitre_techniques": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "MITRE ATT&CK techniques",
+                    "example": [
+                        "T1110.001 - Password Guessing"
+                    ]
+                },
+                "confidence_score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Confidence in the alert (0-1)",
+                    "example": 0.87
+                },
+                "false_positive_likelihood": {
+                    "type": "string",
+                    "enum": [
+                        "high",
+                        "medium",
+                        "low"
+                    ],
+                    "description": "Estimated likelihood of false positive"
+                }
+            }
+        },
+        "metrics": {
+            "type": "object",
+            "description": "Quantitative metrics associated with the alert",
+            "properties": {
+                "event_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Number of events that triggered this alert",
+                    "example": 47
+                },
+                "duration_seconds": {
+                    "type": "number",
+                    "description": "Duration of the activity in seconds",
+                    "example": 300
+                },
+                "data_volume_bytes": {
+                    "type": "integer",
+                    "description": "Volume of data involved (for exfiltration, etc.)",
+                    "example": 1048576
+                },
+                "failed_attempts": {
+                    "type": "integer",
+                    "description": "Number of failed attempts (for authentication alerts)",
+                    "example": 15
+                }
+            }
+        },
+        "raw_log": {
+            "type": "string",
+            "description": "Optional raw log entry that triggered the alert",
+            "example": "Jan 7 14:30:00 sshd[12345]: Failed password for admin from 192.168.1.100 port 52341 ssh2"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Custom tags for categorization and filtering",
+            "example": [
+                "production",
+                "database",
+                "critical-asset",
+                "after-hours"
+            ]
+        },
+        "metadata": {
+            "type": "object",
+            "description": "Extensible field for additional metadata",
+            "additionalProperties": true,
+            "example": {
+                "compliance_frameworks": [
+                    "PCI-DSS",
+                    "HIPAA"
+                ],
+                "business_unit": "Finance",
+                "asset_criticality": "high"
+            }
+        }
+    },
+    "additionalProperties": false
+}
