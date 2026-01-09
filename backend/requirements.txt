@@ -1,0 +1,4 @@
+kafka-python
+jsonschema
+faker
+python-dateutil

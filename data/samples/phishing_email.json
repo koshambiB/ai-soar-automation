@@ -1,0 +1,48 @@
+{
+    "alert_id": "ALT-2F8DCC91",
+    "timestamp": "2026-01-09T09:05:30Z",
+    "source": {
+        "system_name": "Email-Security-Gateway",
+        "system_type": "Email Gateway",
+        "system_id": "mail-sec-01"
+    },
+    "severity": "medium",
+    "alert_type": "phishing",
+    "description": "Phishing email detected containing a malicious URL impersonating corporate login",
+    "affected_assets": [
+        {
+            "asset_type": "user",
+            "asset_id": "hr_user_03"
+        }
+    ],
+    "indicators": {
+        "urls": [
+            "http://malicious-site.com/login"
+        ],
+        "email_addresses": [
+            "attacker@evil.com"
+        ]
+    },
+    "context": {
+        "attack_phase": "delivery",
+        "mitre_tactics": [
+            "TA0001 - Initial Access"
+        ],
+        "mitre_techniques": [
+            "T1566.002 - Spearphishing Link"
+        ],
+        "confidence_score": 0.83,
+        "false_positive_likelihood": "low"
+    },
+    "metrics": {
+        "event_count": 1
+    },
+    "tags": [
+        "email",
+        "phishing",
+        "user-targeted"
+    ],
+    "metadata": {
+        "business_unit": "HR"
+    }
+}

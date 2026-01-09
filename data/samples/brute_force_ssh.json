@@ -1,0 +1,57 @@
+{
+    "alert_id": "ALT-7F3A9B2C",
+    "timestamp": "2026-01-09T14:30:00Z",
+    "source": {
+        "system_name": "Linux-Audit-IDS",
+        "system_type": "IDS",
+        "system_id": "ids-node-01"
+    },
+    "severity": "high",
+    "alert_type": "brute_force",
+    "description": "Multiple failed SSH login attempts detected against a production database server",
+    "affected_assets": [
+        {
+            "asset_type": "host",
+            "asset_id": "prod-db-01",
+            "asset_details": {
+                "hostname": "prod-db-01.corp.local",
+                "ip": "10.0.5.23",
+                "os": "Ubuntu 22.04"
+            }
+        }
+    ],
+    "indicators": {
+        "ip_addresses": [
+            "192.168.1.100"
+        ],
+        "processes": [
+            "sshd"
+        ]
+    },
+    "context": {
+        "attack_phase": "exploitation",
+        "mitre_tactics": [
+            "TA0006 - Credential Access"
+        ],
+        "mitre_techniques": [
+            "T1110.001 - Password Guessing"
+        ],
+        "confidence_score": 0.89,
+        "false_positive_likelihood": "low"
+    },
+    "metrics": {
+        "event_count": 47,
+        "failed_attempts": 15,
+        "duration_seconds": 300
+    },
+    "raw_log": "Failed password for admin from 192.168.1.100 port 52341 ssh2",
+    "tags": [
+        "production",
+        "ssh",
+        "authentication"
+    ],
+    "metadata": {
+        "business_unit": "Engineering",
+        "asset_criticality": "high"
+    }
+}

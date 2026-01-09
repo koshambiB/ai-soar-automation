@@ -1,0 +1,53 @@
+{
+    "alert_id": "ALT-5D92ABF1",
+    "timestamp": "2026-01-09T18:45:12Z",
+    "source": {
+        "system_name": "Network-DLP",
+        "system_type": "DLP",
+        "system_id": "dlp-gateway-02"
+    },
+    "severity": "critical",
+    "alert_type": "data_exfiltration",
+    "description": "Unusually large outbound data transfer detected from finance database server",
+    "affected_assets": [
+        {
+            "asset_type": "host",
+            "asset_id": "finance-db-01",
+            "asset_details": {
+                "hostname": "finance-db-01.corp.local",
+                "ip": "10.0.7.14"
+            }
+        }
+    ],
+    "indicators": {
+        "ip_addresses": [
+            "198.51.100.22"
+        ]
+    },
+    "context": {
+        "attack_phase": "actions_on_objectives",
+        "mitre_tactics": [
+            "TA0010 - Exfiltration"
+        ],
+        "mitre_techniques": [
+            "T1041 - Exfiltration Over C2 Channel"
+        ],
+        "confidence_score": 0.91,
+        "false_positive_likelihood": "medium"
+    },
+    "metrics": {
+        "data_volume_bytes": 124857600,
+        "duration_seconds": 180
+    },
+    "tags": [
+        "data-loss",
+        "finance",
+        "outbound"
+    ],
+    "metadata": {
+        "compliance_frameworks": [
+            "PCI-DSS"
+        ],
+        "asset_criticality": "high"
+    }
+}

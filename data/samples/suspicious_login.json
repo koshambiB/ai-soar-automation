@@ -1,0 +1,45 @@
+{
+    "alert_id": "ALT-91BCF023",
+    "timestamp": "2026-01-09T02:14:55Z",
+    "source": {
+        "system_name": "CloudAuthMonitor",
+        "system_type": "Cloud Security",
+        "system_id": "auth-east-1"
+    },
+    "severity": "medium",
+    "alert_type": "suspicious_login",
+    "description": "Successful login detected outside business hours from a new geographic location",
+    "affected_assets": [
+        {
+            "asset_type": "user",
+            "asset_id": "finance_user"
+        }
+    ],
+    "indicators": {
+        "ip_addresses": [
+            "203.0.113.45"
+        ]
+    },
+    "context": {
+        "attack_phase": "exploitation",
+        "mitre_tactics": [
+            "TA0001 - Initial Access"
+        ],
+        "mitre_techniques": [
+            "T1078 - Valid Accounts"
+        ],
+        "confidence_score": 0.68,
+        "false_positive_likelihood": "medium"
+    },
+    "metrics": {
+        "event_count": 1
+    },
+    "tags": [
+        "authentication",
+        "after-hours",
+        "cloud"
+    ],
+    "metadata": {
+        "business_unit": "Finance"
+    }
+}
