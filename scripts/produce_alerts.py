@@ -10,7 +10,7 @@ import time
 import hashlib
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from kafka import KafkaProducer
+from confluent_kafka import Producer
 from faker import Faker
 
 fake = Faker()
@@ -327,6 +327,12 @@ def generate_raw_log(alert_type):
     return logs.get(alert_type, f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Security event: {alert_type}")
 
 
+def delivery_report(err, msg):
+    """Callback for message delivery reports"""
+    if err is not None:
+        print(f'❌ Message delivery failed: {err}')
+
+
 def main():
     """Main producer loop"""
     print("=" * 80)
@@ -339,13 +345,11 @@ def main():
     
     # Initialize Kafka Producer
     try:
-        producer = KafkaProducer(
-            bootstrap_servers=KAFKA_BROKER,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-            acks='all',
-            retries=3,
-            compression_type='gzip'
-        )
+        producer_config = {
+            'bootstrap.servers': KAFKA_BROKER,
+            'compression.type': 'gzip'
+        }
+        producer = Producer(producer_config)
         print("✅ Connected to Kafka")
         print("-" * 80)
     except Exception as e:
@@ -360,8 +364,12 @@ def main():
             alert = generate_full_alert()
             
             # Send to Kafka
-            future = producer.send(KAFKA_TOPIC, value=alert)
-            metadata = future.get(timeout=10)
+            producer.produce(
+                KAFKA_TOPIC,
+                value=json.dumps(alert).encode('utf-8'),
+                callback=delivery_report
+            )
+            producer.poll(0)  # Trigger callbacks
             
             count += 1
             
@@ -369,8 +377,7 @@ def main():
             print(f"✅ [{count:4d}] {alert['alert_id']:20s} | "
                   f"{alert['alert_type']:25s} | "
                   f"{alert['severity']:8s} | "
-                  f"{alert['source']['system_type']:15s} | "
-                  f"Part:{metadata.partition}")
+                  f"{alert['source']['system_type']:15s}")
             
             # Random delay (1-5 seconds)
             time.sleep(random.uniform(1, 5))
@@ -382,7 +389,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}")
     finally:
-        producer.close()
+        producer.flush()  # Wait for outstanding messages
         print("👋 Producer closed gracefully")
         print("=" * 80)
 
