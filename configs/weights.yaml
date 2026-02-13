@@ -1,0 +1,63 @@
+# Risk Scoring Weights
+# Used to calculate final risk score (0-100)
+
+# Base severity weights
+severity_weights:
+  critical: 40
+  high: 30
+  medium: 20
+  low: 10
+  info: 5
+
+# Alert type base scores
+alert_type_weights:
+  ransomware: 35
+  data_exfiltration: 30
+  malware_detection: 28
+  privilege_escalation: 28
+  brute_force: 25
+  command_and_control: 30
+  lateral_movement: 27
+  insider_threat: 32
+  ddos: 25
+  intrusion_attempt: 22
+  phishing: 20
+  suspicious_login: 18
+  vulnerability_exploit: 23
+  data_leak: 26
+  reconnaissance: 15
+  anomalous_behavior: 18
+  policy_violation: 12
+
+# Confidence score multiplier (0-1 → weight)
+confidence_multiplier: 15  # max additional points
+
+# Asset criticality modifier
+asset_criticality_weights:
+  critical: 20
+  high: 15
+  medium: 10
+  low: 5
+
+# MITRE ATT&CK indicators
+mitre_tactic_bonus: 3  # per tactic (max 5 tactics = 15 points)
+
+# False positive penalty
+false_positive_penalty:
+  high: -15
+  medium: -8
+  low: 0
+
+# After-hours activity bonus
+after_hours_bonus: 5
+
+# Multiple IOCs bonus
+multiple_iocs_bonus: 5  # if alert has 3+ different IOC types
+
+# Risk level thresholds (based on final score)
+risk_thresholds:
+  critical: 80
+  high: 60
+  medium: 40
+  low: 20
+  # Below 20 = info

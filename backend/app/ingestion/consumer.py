@@ -1,8 +1,14 @@
+"""
+Production Kafka Consumer with Alert Analysis
+Consumes alerts, analyzes them, and stores results in PostgreSQL
+"""
+
 from confluent_kafka import Consumer, KafkaError
 import json
 import logging
 from ..core.database import get_connection, get_cursor
 from ..models.alert import insert_alert
+from ..analysis.analyzer import AlertAnalyzer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,10 +35,15 @@ def validate_alert(alert_dict):
     return True
 
 def consume_and_store_alerts():
+    """Main consumer loop with analysis pipeline"""
     consumer = Consumer(KAFKA_CONFIG)
     consumer.subscribe([TOPIC])
     
+    # Initialize analyzer
+    analyzer = AlertAnalyzer()
+    
     logger.info(f"Started consuming from topic: {TOPIC}")
+    logger.info("Alert analysis pipeline enabled")
     
     try:
         while True:
@@ -48,15 +59,36 @@ def consume_and_store_alerts():
                     break
             
             try:
+                # Decode alert
                 alert_data = json.loads(msg.value().decode('utf-8'))
+                
+                # Validate required fields
                 validate_alert(alert_data)
                 
+                # ANALYSIS PIPELINE: Analyze alert before storing
+                analysis_results = analyzer.analyze_alert(alert_data)
+                
+                logger.info(
+                    f"Analysis: {alert_data['alert_id']} → "
+                    f"risk={analysis_results['risk_level']}, "
+                    f"score={analysis_results['rule_score']}, "
+                    f"rules={analysis_results['matched_rule_count']}"
+                )
+                
+                # Store alert with analysis results
                 with get_connection() as conn:
                     cursor = get_cursor(conn)
-                    result_id = insert_alert(cursor, alert_data)
+                    result_id = insert_alert(
+                        cursor, 
+                        alert_data,
+                        analysis_results=analysis_results
+                    )
                     
                     if result_id:
-                        logger.info(f"✓ Stored alert {alert_data['alert_id']} (DB ID: {result_id})")
+                        logger.info(
+                            f"✓ Stored alert {alert_data['alert_id']} "
+                            f"(DB ID: {result_id}, Risk: {analysis_results['risk_level']})"
+                        )
                     else:
                         logger.warning(f"⚠ Duplicate alert skipped: {alert_data['alert_id']}")
                         
@@ -67,13 +99,14 @@ def consume_and_store_alerts():
                 logger.error(f"✗ JSON decode error: {e}")
                 continue
             except Exception as e:
-                logger.error(f"✗ Error processing alert: {e}")
+                logger.error(f"✗ Error processing alert: {e}", exc_info=True)
                 continue
                 
     except KeyboardInterrupt:
         logger.info("Shutting down consumer...")
     finally:
         consumer.close()
+        logger.info("Consumer closed")
 
 if __name__ == "__main__":
     consume_and_store_alerts()

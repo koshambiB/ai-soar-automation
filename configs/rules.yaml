@@ -1,0 +1,121 @@
+# Rule-Based Detection Rules
+# Rules match on GUARANTEED fields only
+# Multiple rules may match the same alert
+# Analyzer aggregates all matched rules for final decision
+
+rules:
+  # Critical Threats
+  - rule_id: "R001"
+    name: "Critical Ransomware Detection"
+    description: "Ransomware alerts are always critical"
+    enabled: true
+    match:
+      alert_type: "ransomware"
+      severity_any: ["critical", "high"]
+    score: 95
+    risk_level: "critical"
+    priority: 1
+    
+  - rule_id: "R002"
+    name: "Data Exfiltration - High Volume"
+    description: "Large data transfers detected"
+    enabled: true
+    match:
+      alert_type: "data_exfiltration"
+      severity_any: ["critical", "high"]
+    score: 90
+    risk_level: "critical"
+    priority: 1
+    
+  # High Risk Threats
+  - rule_id: "R003"
+    name: "Malware Detection - Critical Assets"
+    description: "Malware on critical systems"
+    enabled: true
+    match:
+      alert_type: "malware_detection"
+      severity_any: ["critical", "high"]
+    score: 85
+    risk_level: "high"
+    priority: 2
+    
+  - rule_id: "R004"
+    name: "Brute Force Attack - Multiple Attempts"
+    description: "Credential brute force detected"
+    enabled: true
+    match:
+      alert_type: "brute_force"
+      severity_any: ["critical", "high"]
+    score: 80
+    risk_level: "high"
+    priority: 2
+    
+  - rule_id: "R005"
+    name: "Privilege Escalation Attempt"
+    description: "Unauthorized privilege escalation"
+    enabled: true
+    match:
+      alert_type: "privilege_escalation"
+    score: 85
+    risk_level: "high"
+    priority: 2
+    
+  # Medium Risk
+  - rule_id: "R006"
+    name: "Phishing Email Detected"
+    description: "Phishing attempt identified"
+    enabled: true
+    match:
+      alert_type: "phishing"
+      severity_any: ["medium", "high"]
+    score: 65
+    risk_level: "medium"
+    priority: 3
+    
+  - rule_id: "R007"
+    name: "Suspicious Login Activity"
+    description: "Login from unusual location or time"
+    enabled: true
+    match:
+      alert_type: "suspicious_login"
+    score: 60
+    risk_level: "medium"
+    priority: 3
+    
+  - rule_id: "R008"
+    name: "Intrusion Attempt"
+    description: "Network intrusion detected"
+    enabled: true
+    match:
+      alert_type: "intrusion_attempt"
+      severity_any: ["high", "medium"]
+    score: 70
+    risk_level: "medium"
+    priority: 3
+    
+  # Low Risk / Informational
+  - rule_id: "R009"
+    name: "Policy Violation"
+    description: "Security policy violated"
+    enabled: true
+    match:
+      alert_type: "policy_violation"
+      severity_any: ["low", "medium"]
+    score: 40
+    risk_level: "low"
+    priority: 4
+    
+  - rule_id: "R010"
+    name: "Reconnaissance Activity"
+    description: "Scanning or enumeration detected"
+    enabled: true
+    match:
+      alert_type: "reconnaissance"
+    score: 50
+    risk_level: "low"
+    priority: 4
+
+# Matching operators:
+# - severity_any: matches if alert severity is in the list
+# - All conditions in a rule must match (AND logic)
+# - Multiple rules can match the same alert
