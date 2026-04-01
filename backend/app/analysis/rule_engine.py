@@ -3,7 +3,7 @@ Rule Engine for Alert Analysis
 Matches alerts against YAML-defined rules
 Returns ALL matching rules for aggregation
 """
-
+import os
 import yaml
 from pathlib import Path
 from typing import Dict, List
@@ -12,10 +12,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 class RuleEngine:
-    def __init__(self, rules_path: str = "configs/rules.yaml"):
-        """Initialize rule engine with YAML config"""
-        self.rules = self._load_rules(rules_path)
-        logger.info(f"Loaded {len(self.rules)} rules from {rules_path}")
+    def __init__(self, rules_path: str = None):
+        if rules_path is None:
+            _root = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+            rules_path = os.path.join(_root, "configs", "rules.yaml")
+            """Initialize rule engine with YAML config"""
+            self.rules = self._load_rules(rules_path)
+            logger.info(f"Loaded {len(self.rules)} rules from {rules_path}")
     
     def _load_rules(self, path: str) -> List[Dict]:
         """Load and validate rules from YAML"""
