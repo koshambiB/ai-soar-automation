@@ -1,8 +1,28 @@
-jsonschema
-faker
-python-dateutil
-confluent-kafka
-psycopg[binary]==3.3.2
-python-dotenv==1.0.0
-psycopg-pool==3.2.6
-PyYAML>=6.0
+
+
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+
+# Kafka
+confluent-kafka==2.6.1
+
+# Database
+psycopg[binary,pool]==3.2.3
+
+# Data processing
+pandas==2.2.3
+numpy==1.26.4
+
+# ML
+scikit-learn==1.5.2
+joblib==1.4.2
+
+# Explainability
+shap==0.46.0
+
+# Utilities
+python-dotenv==1.0.1
+pyyaml==6.0.2
+faker==30.3.0
