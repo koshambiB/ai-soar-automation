@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def insert_alert(cursor, alert_dict, analysis_results=None):
+def insert_alert(cursor, alert_dict, analysis_results=None, **kwargs):
     """
     Insert alert with optional analysis results
     Returns inserted row id or None if duplicate

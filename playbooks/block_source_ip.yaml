@@ -1,0 +1,26 @@
+id: block_source_ip
+name: "IP Blocking Playbook"
+description: "Block malicious IP address at perimeter firewall"
+severity: high
+estimated_duration_minutes: 2
+
+steps:
+  - name: "Block IP at firewall"
+    action: block_ip
+    description: "Add deny rule for source IP"
+    timeout_seconds: 15
+    
+  - name: "Notify NOC team"
+    action: send_notification
+    recipients:
+      - noc@company.com
+    message: "Malicious IP blocked at firewall"
+    
+  - name: "Log blocking action"
+    action: preserve_logs
+    retention_days: 365
+
+tags:
+  - network
+  - firewall
+  - containment

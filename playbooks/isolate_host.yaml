@@ -1,0 +1,32 @@
+id: isolate_host
+name: "Host Isolation Playbook"
+description: "Isolate compromised host from network to prevent lateral movement"
+severity: critical
+estimated_duration_minutes: 5
+
+steps:
+  - name: "Isolate host from network"
+    action: isolate_host
+    description: "Block all network traffic to/from the affected host"
+    timeout_seconds: 30
+    
+  - name: "Notify Security Team"
+    action: send_notification
+    recipients:
+      - soc-lead@company.com
+      - incident-response@company.com
+    message: "Host has been isolated from network due to security incident"
+    
+  - name: "Create incident ticket"
+    action: create_ticket
+    priority: high
+    assignment_group: "Incident Response"
+    
+  - name: "Preserve forensic logs"
+    action: preserve_logs
+    retention_days: 90
+
+tags:
+  - containment
+  - critical
+  - network_isolation

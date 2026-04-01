@@ -123,11 +123,10 @@ class SHAPExplainer:
             }
 
         except Exception as e:
-            logger.error(f"SHAP explanation failed: {e}")
+            logger.error(f"SHAP failed: {e}")
             return {
-                "top_features":     [],
-                "explanation_text": f"Explanation failed: {str(e)}",
-                "shap_available":   False,
+                "shap_available": False,
+                "top_features": []
             }
 
 

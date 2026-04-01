@@ -13,21 +13,25 @@ from .feature_extractor import FeatureExtractor
 logger = logging.getLogger(__name__)
 
 class AlertAnalyzer:
-    def __init__(self,
-             rules_path: str = None,
-                weights_path: str = None):
-        """Initialize analyzer with rule engine and feature extractor"""
-        # Resolve paths relative to project root regardless of cwd
-        _root = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    def __init__(self, rules_path: str = None, weights_path: str = None):
+
+        _root = os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..")
+        )
+
         if rules_path is None:
             rules_path = os.path.join(_root, "configs", "rules.yaml")
+
         if weights_path is None:
             weights_path = os.path.join(_root, "configs", "weights.yaml")
-        
+
+        # ✅ FIX: initialize properly
         self.rule_engine = RuleEngine(rules_path)
+
         self.feature_extractor = FeatureExtractor()
         self.weights = self._load_weights(weights_path)
-        logger.info("AlertAnalyzer initialized successfully")
+
+    logger.info("AlertAnalyzer initialized successfully")
     
     def _load_weights(self, path: str) -> Dict:
         """Load scoring weights from YAML"""

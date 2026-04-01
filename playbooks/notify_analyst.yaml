@@ -1,0 +1,21 @@
+id: notify_analyst
+name: "Analyst Notification Playbook"
+description: "Send alert to security analyst for manual review"
+severity: medium
+estimated_duration_minutes: 1
+
+steps:
+  - name: "Send email notification"
+    action: send_notification
+    recipients:
+      - soc-analyst@company.com
+    message: "New security alert requires review"
+    
+  - name: "Create ServiceNow ticket"
+    action: create_ticket
+    priority: medium
+    assignment_group: "SOC Tier 1"
+
+tags:
+  - notification
+  - manual_review
